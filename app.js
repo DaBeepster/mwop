@@ -3971,7 +3971,7 @@ _global.eventSys.on(_conf.EVENTS.net.world.setId, function (id) {
 		_global.eventSys.once(_conf.EVENTS.net.disconnected, onWrong);
 		_global.eventSys.on(_conf.EVENTS.net.sec.rank, onCorrect);
 		var msg;
-		if (desiredRank == _conf.RANK.OWNERLOGIN) {
+		if (desiredRank == _conf.RANK.OWNER) {
 			msg = "/ownerlogin " + misc.localStorage.ownerlogin;
 		} else if (desiredRank == _conf.RANK.ADMIN) {
 			msg = "/adminlogin " + misc.localStorage.adminlogin;
@@ -4790,7 +4790,7 @@ var OldProtocolImpl = function (_Protocol) {
 	}, {
 		key: 'setChunk',
 		value: function setChunk(x, y, data) {
-			if (!(_local_player.player.rank == _conf.RANK.ADMIN || _local_player.player.rank == _conf.RANK.MODERATOR && this.placeBucket.canSpend(1.25))) {
+			if (!(_local_player.player.rank == _conf.RANK.OWNER || _local_player.player.rank == _conf.RANK.ADMIN || _local_player.player.rank == _conf.RANK.MODERATOR && this.placeBucket.canSpend(1.25))) {
 				return false;
 			}
 
@@ -4809,7 +4809,7 @@ var OldProtocolImpl = function (_Protocol) {
 	}, {
 		key: 'clearChunk',
 		value: function clearChunk(x, y, rgb) {
-			if (_local_player.player.rank == _conf.RANK.ADMIN || _local_player.player.rank == _conf.RANK.MODERATOR && this.placeBucket.canSpend(1)) {
+			if (_local_player.player.rank == _conf.RANK.OWNER || _local_player.player.rank == _conf.RANK.ADMIN || _local_player.player.rank == _conf.RANK.MODERATOR && this.placeBucket.canSpend(1)) {
 				var array = new ArrayBuffer(13);
 				var dv = new DataView(array);
 				dv.setInt32(0, x, true);
@@ -5873,7 +5873,7 @@ _global.eventSys.once(_conf.EVENTS.misc.toolsRendered, function () {
 					end = null;
 					return;
 				}
-				if (_local_player.player.rank == _conf.RANK.ADMIN) {
+				if (_local_player.player.rank == _conf.RANK.ADMIN || _local_player.player.rank == _conf.RANK.OWNER) {
 					line(start[0], start[1], end[0], end[1], function (x, y) {
 						_main.misc.world.setPixel(x, y, _local_player.player.selectedColor);
 					});
