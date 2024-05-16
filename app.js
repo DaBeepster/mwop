@@ -4385,7 +4385,7 @@ var OldProtocol = exports.OldProtocol = {
 	maxWorldNameLength: 24,
 	worldBorder: 0xFFFFF,
 	chatBucket: [4, 6],
-	placeBucket: (_placeBucket = {}, _defineProperty(_placeBucket, _conf.RANK.NONE, [0, 1]), _defineProperty(_placeBucket, _conf.RANK.USER, [32, 4]), _defineProperty(_placeBucket, _conf.RANK.MODERATOR, [32, 2]), _defineProperty(_placeBucket, _conf.RANK.ADMIN, [32, 0]), _defineProperty(_placeBucket, _conf.RANK.OWNER, [256, 0]), _placeBucket),
+	placeBucket: (_placeBucket = {}, _defineProperty(_placeBucket, _conf.RANK.NONE, [0, 1]), _defineProperty(_placeBucket, _conf.RANK.USER, [32, 4]), _defineProperty(_placeBucket, _conf.RANK.MODERATOR, [32, 2]), _defineProperty(_placeBucket, _conf.RANK.ADMIN, [32, 0]), _defineProperty(_placeBucket, _conf.RANK.OWNER, [32, 0]), _placeBucket),
 	maxMessageLength: (_maxMessageLength = {}, _defineProperty(_maxMessageLength, _conf.RANK.NONE, 128), _defineProperty(_maxMessageLength, _conf.RANK.USER, 128), _defineProperty(_maxMessageLength, _conf.RANK.MODERATOR, 512), _defineProperty(_maxMessageLength, _conf.RANK.ADMIN, 16384), _defineProperty(_maxMessageLength, _conf.RANK.OWNER, 16384), _maxMessageLength),
 	tools: {
 		id: {}, /* Generated automatically */
@@ -4767,7 +4767,7 @@ var OldProtocolImpl = function (_Protocol) {
 		key: 'sendMessage',
 		value: function sendMessage(str) {
 			if (str.length && this.id !== null) {
-				if (_local_player.player.rank == _conf.RANK.ADMIN || this.chatBucket.canSpend(1)) {
+				if (_local_player.player.rank == _conf.RANK.ADMIN || _local_player.player.rank == _conf.RANK.OWNER || this.chatBucket.canSpend(1)) {
 					this.ws.send(str + OldProtocol.misc.chatVerification);
 					return true; //amoguscharg
 				} else {
