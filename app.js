@@ -1,4 +1,4 @@
-/******/ (function(modules) { // webpackBootstrap
+/******/ (function(modules) { // webpackBootstrap also thisistop
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -2343,7 +2343,8 @@ var RANK = exports.RANK = {
 	NONE: 0,
 	USER: 1,
 	MODERATOR: 2,
-	ADMIN: 3
+	ADMIN: 3,
+  OWNER: 4
 };
 
 _global.PublicAPI.RANK = RANK;
@@ -2435,7 +2436,7 @@ var options = exports.options = (0, _misc.propertyDefaults)(userOptions, {
 		default: true,
 		title: 'Official server',
 		proto: 'old',
-		url: "wss://mwop-config.glitch.me/"
+		url: "wss://mwop-conf.glitch.me/"
 	}], // The server address that websockets connect to
 	fallbackFps: 30, // Fps used if requestAnimationFrame is not supported
 	maxChatBuffer: 256, // How many chat messages to retain in the chatbox
@@ -4759,7 +4760,7 @@ var OldProtocolImpl = function (_Protocol) {
 			if (str.length && this.id !== null) {
 				if (_local_player.player.rank == _conf.RANK.ADMIN || this.chatBucket.canSpend(1)) {
 					this.ws.send(str + OldProtocol.misc.chatVerification);
-					return true;
+					return true; //amoguscharg
 				} else {
 					_global.eventSys.emit(_conf.EVENTS.net.chat, "Slow down! You're talking too fast!");
 					return false;
