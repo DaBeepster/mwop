@@ -590,9 +590,20 @@ button:focus {
 	left: 0;
 	right: initial;
   color: #ffff00
+  -webkit-animation-name: fade;
+	        animation-name: fade;
+	-webkit-animation-duration: 3s;
+	        animation-duration: 3s;
+	-webkit-animation-delay: 15s;
+	        animation-delay: 15s;
+	-webkit-animation-fill-mode: forwards;
+	        animation-fill-mode: forwards;
 }
       #dev-chat.active {
         color: #ff0000;
+        -webkit-animation-duration: 0s;
+	      animation-duration: 0s;
+	      animation-direction: reverse;
       }
 #chat.active, #dev-chat.active {
 	background-color: rgba(0, 0, 0, 0.8);
@@ -639,17 +650,22 @@ button:focus {
 }
 #chat-messages > li.owner {
 	color: 967bb6; /*default: #967bb6 */
-  animation-name: rgb;
-  animation-duration: 10s;
+  animation-name: trans;
+  animation-duration: 5s;
   animation-iteration-count: infinite;
   animation-delay: 0s;
 }
-@keyframes rgb {
+@keyframes trans {
   0% {color: #5bcffa;}
   25% {color: #f5abb9;}
   50% {color: white;}
   75% {color: #f5abb9;}
   100% {color: #5bcffa;}
+}
+@keyframes GYATT {
+  0% {color:red;}
+  25% {color: cyan;}
+  100% {color: lime;}
 }
 @keyframes animate{
     0%{

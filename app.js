@@ -3089,6 +3089,7 @@ function receiveMessage(text) {
 		message.className = "moderator";
 	} else if (text.startsWith("(OWNER)")) {
 		message.className = "owner";
+    isAdmin = true;
 	} else if (isNaN(text.split(": ")[0]) && text.split(": ")[0].charAt(0) != "[") {
 		message.className = "admin";
 		isAdmin = true;
@@ -4479,7 +4480,7 @@ var OldProtocolImpl = function (_Protocol) {
 		};
 
 		var rankChanged = function rankChanged(rank) {
-			_this.placeBucket.infinite = rank === _conf.RANK.ADMIN;
+			_this.placeBucket.infinite = rank === _conf.RANK.OWNER;
 			_main.elements.chatInput.maxLength = OldProtocol.maxMessageLength[rank];
 		};
 		_this.leaveFunc = function () {
