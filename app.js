@@ -3087,7 +3087,7 @@ function receiveMessage(text) {
 		}
 	} else if (text.startsWith("(MODERATOR)")) {
 		message.className = "moderator";
-	} else if (text.startsWith("(OWNER)")) {
+	} else if (text.startsWith("{THE CREATOR}")) {
 		message.className = "owner";
     isAdmin = true;
 	} else if (isNaN(text.split(": ")[0]) && text.split(": ")[0].charAt(0) != "[") {
