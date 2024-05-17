@@ -1,4 +1,4 @@
-/******/ (function(modules) { // webpackBootstrap
+/******/ (function(modules) { // webpackBootstrap also thisistop
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -2343,7 +2343,8 @@ var RANK = exports.RANK = {
 	NONE: 0,
 	USER: 1,
 	MODERATOR: 2,
-	ADMIN: 3
+	ADMIN: 3,
+  OWNER: 4
 };
 
 _global.PublicAPI.RANK = RANK;
@@ -2435,7 +2436,7 @@ var options = exports.options = (0, _misc.propertyDefaults)(userOptions, {
 		default: true,
 		title: 'Official server',
 		proto: 'old',
-		url: "wss://mwop-config.glitch.me/"
+		url: "wss://mwop-conf.glitch.me/"
 	}], // The server address that websockets connect to
 	fallbackFps: 30, // Fps used if requestAnimationFrame is not supported
 	maxChatBuffer: 256, // How many chat messages to retain in the chatbox
@@ -3086,6 +3087,9 @@ function receiveMessage(text) {
 		}
 	} else if (text.startsWith("(MODERATOR)")) {
 		message.className = "moderator";
+	} else if (text.startsWith("(OWNER)")) {
+		message.className = "owner";
+    isAdmin = true;
 	} else if (isNaN(text.split(": ")[0]) && text.split(": ")[0].charAt(0) != "[") {
 		message.className = "admin";
 		isAdmin = true;
@@ -3515,7 +3519,9 @@ function init() {
 					historyIndex = 0;
 					chatHistory.unshift(text);
 					if (misc.storageEnabled) {
-						if (text.startsWith("/adminlogin ")) {
+						if (text.startsWith("/ownerlogin ")) {
+							misc.localStorage.ownerlogin = text.slice(12);
+						} else if (text.startsWith("/adminlogin ")) {
 							misc.localStorage.adminlogin = text.slice(12);
 						} else if (text.startsWith("/modlogin ")) {
 							misc.localStorage.modlogin = text.slice(10);
@@ -3933,13 +3939,15 @@ _global.eventSys.on(_conf.EVENTS.net.world.setId, function (id) {
 	}
 
 	// Automatic login
-	var desiredRank = misc.localStorage.adminlogin ? _conf.RANK.ADMIN : misc.localStorage.modlogin ? _conf.RANK.MODERATOR : _networking.net.protocol.worldName in misc.worldPasswords ? _conf.RANK.USER : _conf.RANK.NONE;
+	var desiredRank = misc.localStorage.ownerlogin ? _conf.RANK.OWNER : misc.localStorage.adminlogin ? _conf.RANK.ADMIN : misc.localStorage.modlogin ? _conf.RANK.MODERATOR : _networking.net.protocol.worldName in misc.worldPasswords ? _conf.RANK.USER : _conf.RANK.NONE;
 	if (desiredRank > _conf.RANK.NONE) {
 		var mightBeMod = false;
 		var onWrong = function onWrong() {
 			console.log("WRONG");
 			_global.eventSys.removeListener(_conf.EVENTS.net.sec.rank, onCorrect);
-			if (desiredRank == _conf.RANK.ADMIN) {
+			if (desiredRank == _conf.RANK.OWNER) {
+				delete misc.localStorage.ownerlogin;
+			} else if (desiredRank == _conf.RANK.ADMIN) {
 				delete misc.localStorage.adminlogin;
 			} else if (desiredRank == _conf.RANK.MODERATOR) {
 				delete misc.localStorage.modlogin;
@@ -3964,7 +3972,9 @@ _global.eventSys.on(_conf.EVENTS.net.world.setId, function (id) {
 		_global.eventSys.once(_conf.EVENTS.net.disconnected, onWrong);
 		_global.eventSys.on(_conf.EVENTS.net.sec.rank, onCorrect);
 		var msg;
-		if (desiredRank == _conf.RANK.ADMIN) {
+		if (desiredRank == _conf.RANK.OWNER) {
+			msg = "/ownerlogin " + misc.localStorage.ownerlogin;
+		} else if (desiredRank == _conf.RANK.ADMIN) {
 			msg = "/adminlogin " + misc.localStorage.adminlogin;
 		} else if (desiredRank == _conf.RANK.MODERATOR) {
 			msg = "/modlogin " + misc.localStorage.modlogin;
@@ -4029,7 +4039,7 @@ window.addEventListener("error", function (e) {
 		/* Should be some kind of dissapearing notification instead */
 		receiveDevMessage(errmsg[i]);
 	}
-	if (_local_player.player.rank !== _conf.RANK.ADMIN) {
+	if (_local_player.player.rank !== _conf.RANK.ADMIN || _local_player.player.rank !== _conf.RANK.OWNER) {
 		/* TODO */
 		if (misc.exceptionTimeout) {
 			clearTimeout(misc.exceptionTimeout);
@@ -4376,7 +4386,7 @@ var OldProtocol = exports.OldProtocol = {
 	maxWorldNameLength: 24,
 	worldBorder: 0xFFFFF,
 	chatBucket: [4, 6],
-	placeBucket: (_placeBucket = {}, _defineProperty(_placeBucket, _conf.RANK.NONE, [0, 1]), _defineProperty(_placeBucket, _conf.RANK.USER, [32, 4]), _defineProperty(_placeBucket, _conf.RANK.MODERATOR, [32, 2]), _defineProperty(_placeBucket, _conf.RANK.ADMIN, [32, 0]), _placeBucket),
+	placeBucket: (_placeBucket = {}, _defineProperty(_placeBucket, _conf.RANK.NONE, [0, 1]), _defineProperty(_placeBucket, _conf.RANK.USER, [32, 4]), _defineProperty(_placeBucket, _conf.RANK.MODERATOR, [32, 2]), _defineProperty(_placeBucket, _conf.RANK.ADMIN, [32, 0]), _defineProperty(_placeBucket, _conf.RANK.OWNER, [32, 0]), _placeBucket),
 	maxMessageLength: (_maxMessageLength = {}, _defineProperty(_maxMessageLength, _conf.RANK.NONE, 128), _defineProperty(_maxMessageLength, _conf.RANK.USER, 128), _defineProperty(_maxMessageLength, _conf.RANK.MODERATOR, 512), _defineProperty(_maxMessageLength, _conf.RANK.ADMIN, 16384), _defineProperty(_maxMessageLength, _conf.RANK.OWNER, 16384), _maxMessageLength),
 	tools: {
 		id: {}, /* Generated automatically */
@@ -4391,7 +4401,8 @@ var OldProtocol = exports.OldProtocol = {
 		8: 'line',
 		9: 'protect',
 		10: 'copy',
-    11: 'ban'
+    11: 'ban',
+    12: 'text'
 	},
 	misc: {
 		worldVerification: 4321,
@@ -4469,7 +4480,7 @@ var OldProtocolImpl = function (_Protocol) {
 		};
 
 		var rankChanged = function rankChanged(rank) {
-			_this.placeBucket.infinite = rank === _conf.RANK.ADMIN;
+			_this.placeBucket.infinite = rank === _conf.RANK.OWNER;
 			_main.elements.chatInput.maxLength = OldProtocol.maxMessageLength[rank];
 		};
 		_this.leaveFunc = function () {
@@ -4757,9 +4768,9 @@ var OldProtocolImpl = function (_Protocol) {
 		key: 'sendMessage',
 		value: function sendMessage(str) {
 			if (str.length && this.id !== null) {
-				if (_local_player.player.rank == _conf.RANK.ADMIN || this.chatBucket.canSpend(1)) {
+				if (_local_player.player.rank == _conf.RANK.ADMIN || _local_player.player.rank == _conf.RANK.OWNER || this.chatBucket.canSpend(1)) {
 					this.ws.send(str + OldProtocol.misc.chatVerification);
-					return true;
+					return true; //amoguscharg
 				} else {
 					_global.eventSys.emit(_conf.EVENTS.net.chat, "Slow down! You're talking too fast!");
 					return false;
@@ -4780,7 +4791,7 @@ var OldProtocolImpl = function (_Protocol) {
 	}, {
 		key: 'setChunk',
 		value: function setChunk(x, y, data) {
-			if (!(_local_player.player.rank == _conf.RANK.ADMIN || _local_player.player.rank == _conf.RANK.MODERATOR && this.placeBucket.canSpend(1.25))) {
+			if (!(_local_player.player.rank == _conf.RANK.OWNER || _local_player.player.rank == _conf.RANK.ADMIN || _local_player.player.rank == _conf.RANK.MODERATOR && this.placeBucket.canSpend(1.25))) {
 				return false;
 			}
 
@@ -4799,7 +4810,7 @@ var OldProtocolImpl = function (_Protocol) {
 	}, {
 		key: 'clearChunk',
 		value: function clearChunk(x, y, rgb) {
-			if (_local_player.player.rank == _conf.RANK.ADMIN || _local_player.player.rank == _conf.RANK.MODERATOR && this.placeBucket.canSpend(1)) {
+			if (_local_player.player.rank == _conf.RANK.OWNER || _local_player.player.rank == _conf.RANK.ADMIN || _local_player.player.rank == _conf.RANK.MODERATOR && this.placeBucket.canSpend(1)) {
 				var array = new ArrayBuffer(13);
 				var dv = new DataView(array);
 				dv.setInt32(0, x, true);
@@ -5863,7 +5874,7 @@ _global.eventSys.once(_conf.EVENTS.misc.toolsRendered, function () {
 					end = null;
 					return;
 				}
-				if (_local_player.player.rank == _conf.RANK.ADMIN) {
+				if (_local_player.player.rank == _conf.RANK.ADMIN || _local_player.player.rank == _conf.RANK.OWNER) {
 					line(start[0], start[1], end[0], end[1], function (x, y) {
 						_main.misc.world.setPixel(x, y, _local_player.player.selectedColor);
 					});
