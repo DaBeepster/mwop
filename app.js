@@ -2449,8 +2449,8 @@ var options = exports.options = (0, _misc.propertyDefaults)(userOptions, {
 	enableIdView: true,
 	defaultZoom: 16,
 	zoomStrength: 1,
-	zoomLimitMin: 1,
-	zoomLimitMax: 32,
+	zoomLimitMin: 0.999999999999999999999,
+	zoomLimitMax: 64,
 	unloadDistance: 10,
 	toolSetUrl: _toolset2.default,
 	unloadedPatternUrl: _unloaded2.default,
@@ -3089,11 +3089,14 @@ function receiveMessage(text) {
 		}
 	} else if (text.startsWith("(MODERATOR)")) {
 		message.className = "moderator";
-	} else if (text.startsWith("{THE CREATOR}")) {
+	} else if (text.startsWith("[OWNER]")) {
 		message.className = "owner";
     isAdmin = true;
-	} else if (isNaN(text.split(": ")[0]) && text.split(": ")[0].charAt(0) != "[") {
+	} else if (text.startsWith("(True Administrator)")) {
 		message.className = "admin";
+		isAdmin = true;
+	} else if (isNaN(text.split(": ")[0]) && text.split(": ")[0].charAt(0) != "[") {
+		message.className = "admintwo";
 		isAdmin = true;
 	} else {
 		var nick = document.createElement("span");
