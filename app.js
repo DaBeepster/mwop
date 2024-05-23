@@ -903,7 +903,11 @@ var Player = exports.Player = function () {
         this.id = id.toString(); /* Prevents calling .toString every frame */
         this._x = new _Lerp.Lerp(x, x, 65);
         this._y = new _Lerp.Lerp(y, y, 65);
-        this.nickname = localStorage.nick.toString();
+        if (localStorage.nick == undefined) {
+          this.nickname = localStorage.nick;
+        } else {
+          this.nickname = localStorage.nick.toString();
+        }
 
         this.tool = _tools.tools[tool] || _tools.tools['cursor'];
         this.fx = new _Fx.Fx(tool ? tool.fxType : _Fx.PLAYERFX.NONE, { player: this });
