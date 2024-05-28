@@ -3395,6 +3395,7 @@ function inGameDisconnected() {
 	misc.world = null;
 	elements.chat.style.transform = "initial";
 	elements.chatInput.style.display = "";
+  document.title = "Disconnected - World of Pixels"
 }
 
 function retryingConnect(serverGetter, worldName) {
