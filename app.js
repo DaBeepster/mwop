@@ -94,26 +94,8 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
+/* THIS IS MY MAGNUM OPUS
+IT TOOK SO LONG */
 
 
 
@@ -3604,7 +3586,7 @@ function init() {
 				if (tool.call('keydown', [keysDown, event])) {
 					return false;
 				}
-			}
+			} /* keybindse */
 			switch (keyCode) {
 				case 80:
 					/* P */
@@ -3614,6 +3596,16 @@ function init() {
 				case 79:
 					/* O */
 					_local_player.player.tool = "cursor";
+					break;
+          
+        case 76:
+					/* L */
+					_local_player.player.tool = "line";
+					break;
+          
+        case 66:
+					/* B */
+					_local_player.player.tool = "fill";
 					break;
 
 				case 77: /* M */
@@ -4735,7 +4727,7 @@ var OldProtocolImpl = function (_Protocol) {
 			var distx = Math.trunc(x / OldProtocol.chunkSize) - Math.trunc(this.lastSentX / (OldProtocol.chunkSize * 16));distx *= distx;
 			var disty = Math.trunc(y / OldProtocol.chunkSize) - Math.trunc(this.lastSentY / (OldProtocol.chunkSize * 16));disty *= disty;
 			var dist = Math.sqrt(distx + disty);
-			if (this.isConnected() && (dist < 3 || _local_player.player.rank == _conf.RANK.ADMIN) && this.placeBucket.canSpend(1)) {
+			if (this.isConnected() && (dist < 3 || _local_player.player.rank == _conf.RANK.OWNER) && this.placeBucket.canSpend(1)) {
 				var array = new ArrayBuffer(11);
 				var dv = new DataView(array);
 				dv.setInt32(0, x, true);
