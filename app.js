@@ -4728,7 +4728,7 @@ var OldProtocolImpl = function (_Protocol) {
 			var distx = Math.trunc(x / OldProtocol.chunkSize) - Math.trunc(this.lastSentX / (OldProtocol.chunkSize * 16));distx *= distx;
 			var disty = Math.trunc(y / OldProtocol.chunkSize) - Math.trunc(this.lastSentY / (OldProtocol.chunkSize * 16));disty *= disty;
 			var dist = Math.sqrt(distx + disty);
-			if (this.isConnected() && (dist < 3 || _local_player.player.rank == _conf.RANK.OWNER) && this.placeBucket.canSpend(1)) {
+			if (this.isConnected() && (dist < 3 || _local_player.player.rank == _conf.RANK.ADMIN) && this.placeBucket.canSpend(1)) {
 				var array = new ArrayBuffer(11);
 				var dv = new DataView(array);
 				dv.setInt32(0, x, true);
@@ -4770,7 +4770,7 @@ var OldProtocolImpl = function (_Protocol) {
 		key: 'sendMessage',
 		value: function sendMessage(str) {
 			if (str.length && this.id !== null) {
-				if (_local_player.player.rank == _conf.RANK.ADMIN || _local_player.player.rank == _conf.RANK.OWNER || this.chatBucket.canSpend(1)) {
+				if (_local_player.player.rank >= _conf.RANK.ADMIN || this.chatBucket.canSpend(1)) {
 					this.ws.send(str + OldProtocol.misc.chatVerification);
 					return true; //amoguscharg
 				} else {
