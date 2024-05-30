@@ -1093,7 +1093,7 @@ var World = exports.World = function () {
 		this.pathFx = new _Fx.Fx(function (fx, ctx, time) {
 			var retval = 1;
 			if (fx.extra.path) {
-				ctx.strokeStyle = "#9e2835"; /*default: #525252*/
+				ctx.strokeStyle = "#ff4f4f"; /*default: #525252*/
 				var l = ctx.lineWidth;
 				ctx.lineWidth = 3 / _canvas_renderer.camera.zoom;
 				ctx.setTransform(_canvas_renderer.camera.zoom, 0, 0, _canvas_renderer.camera.zoom, -_canvas_renderer.camera.x * _canvas_renderer.camera.zoom, -_canvas_renderer.camera.y * _canvas_renderer.camera.zoom);
@@ -4482,7 +4482,7 @@ var OldProtocolImpl = function (_Protocol) {
 		};
 
 		var rankChanged = function rankChanged(rank) {
-			_this.placeBucket.infinite = rank === _conf.RANK.OWNER;
+			_this.placeBucket.infinite = rank === _conf.RANK.ADMIN;
 			_main.elements.chatInput.maxLength = OldProtocol.maxMessageLength[rank];
 		};
 		_this.leaveFunc = function () {
@@ -5876,7 +5876,7 @@ _global.eventSys.once(_conf.EVENTS.misc.toolsRendered, function () {
 					end = null;
 					return;
 				}
-				if (_local_player.player.rank == _conf.RANK.ADMIN || _local_player.player.rank == _conf.RANK.OWNER) {
+				if (_local_player.player.rank == _conf.RANK.ADMIN) {
 					line(start[0], start[1], end[0], end[1], function (x, y) {
 						_main.misc.world.setPixel(x, y, _local_player.player.selectedColor);
 					});
