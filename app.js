@@ -1093,7 +1093,7 @@ var World = exports.World = function () {
 		this.pathFx = new _Fx.Fx(function (fx, ctx, time) {
 			var retval = 1;
 			if (fx.extra.path) {
-				ctx.strokeStyle = "#9e2835"; /*default: #525252*/
+				ctx.strokeStyle = "#ff4f4f"; /*default: #525252*/
 				var l = ctx.lineWidth;
 				ctx.lineWidth = 3 / _canvas_renderer.camera.zoom;
 				ctx.setTransform(_canvas_renderer.camera.zoom, 0, 0, _canvas_renderer.camera.zoom, -_canvas_renderer.camera.x * _canvas_renderer.camera.zoom, -_canvas_renderer.camera.y * _canvas_renderer.camera.zoom);
