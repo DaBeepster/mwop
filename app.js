@@ -2444,7 +2444,7 @@ var options = exports.options = (0, _misc.propertyDefaults)(userOptions, {
 	fool: shouldFool,
 	backgroundUrl: null,
 	/* Bug only affects Windows users with an old Intel graphics card driver */
-	chunkBugWorkaround: false, // navigator.userAgent.indexOf('Windows NT') !== -1
+	chunkBugWorkaround: true, // navigator.userAgent.indexOf('Windows NT') !== -1
 	hexCoords: false
 });
 
@@ -4403,8 +4403,7 @@ var OldProtocol = exports.OldProtocol = {
 		8: 'line',
 		9: 'protect',
 		10: 'copy',
-    11: 'ban',
-    12: 'text'
+    11: 'ban'
 	},
 	misc: {
 		worldVerification: 4321,
@@ -4482,7 +4481,7 @@ var OldProtocolImpl = function (_Protocol) {
 		};
 
 		var rankChanged = function rankChanged(rank) {
-			_this.placeBucket.infinite = rank === _conf.RANK.ADMIN;
+			_this.placeBucket.infinite = rank === _conf.RANK.OWNER;
 			_main.elements.chatInput.maxLength = OldProtocol.maxMessageLength[rank];
 		};
 		_this.leaveFunc = function () {
@@ -4527,7 +4526,7 @@ var OldProtocolImpl = function (_Protocol) {
 					_global.eventSys.emit(_conf.EVENTS.net.world.join, this.worldName);
 					_global.eventSys.emit(_conf.EVENTS.net.world.setId, _id);
 					_global.eventSys.emit(_conf.EVENTS.net.playerCount, this.playercount);
-					_global.eventSys.emit(_conf.EVENTS.net.chat, "[Server] Joined world: \"" + this.worldName + "\", your ID is: " + _id + "!");
+					_global.eventSys.emit(_conf.EVENTS.net.chat, "[Server] Joined world: \"" + this.worldName + "\", your ID is: " + _id + "!"); //when player comez
 					break;
 
 				case oc.worldUpdate:
@@ -4728,7 +4727,7 @@ var OldProtocolImpl = function (_Protocol) {
 			var distx = Math.trunc(x / OldProtocol.chunkSize) - Math.trunc(this.lastSentX / (OldProtocol.chunkSize * 16));distx *= distx;
 			var disty = Math.trunc(y / OldProtocol.chunkSize) - Math.trunc(this.lastSentY / (OldProtocol.chunkSize * 16));disty *= disty;
 			var dist = Math.sqrt(distx + disty);
-			if (this.isConnected() && (dist < 3 || _local_player.player.rank == _conf.RANK.ADMIN) && this.placeBucket.canSpend(1)) {
+			if (this.isConnected() && (dist < 3 || _local_player.player.rank == _conf.RANK.OWNER) && this.placeBucket.canSpend(1)) {
 				var array = new ArrayBuffer(11);
 				var dv = new DataView(array);
 				dv.setInt32(0, x, true);
