@@ -5741,7 +5741,13 @@ _global.eventSys.once(_conf.EVENTS.misc.toolsRendered, function () {
 			var tickAmount = tool.extra.tickAmount;
 			if (_main.keysDown[17]) {
 				/* Ctrl */
-				tickAmount *= 3;
+        if (_local_player.player.rank == _conf.RANK.OWNER) {
+          tickAmount *= 69;
+        } else if (_local_player.player.rank == _conf.RANK.ADMIN) {
+          tickAmount *= 25;
+        } else {
+          tickAmount *= 3;
+        }
 			}
 
 			for (var painted = 0; painted < tickAmount && queue.length; painted++) {
@@ -5877,7 +5883,7 @@ _global.eventSys.once(_conf.EVENTS.misc.toolsRendered, function () {
 					end = null;
 					return;
 				}
-				if (_local_player.player.rank == _conf.RANK.ADMIN) {
+				if (_local_player.player.rank == _conf.RANK.OWNER) {
 					line(start[0], start[1], end[0], end[1], function (x, y) {
 						_main.misc.world.setPixel(x, y, _local_player.player.selectedColor);
 					});
@@ -6873,11 +6879,6 @@ _global.eventSys.once(_conf.EVENTS.misc.toolsRendered, function () {
         for (var i = y; i < y + h; i++) {
 					for (var j = x; j < x + w; j++) {
 						var pix = _main.misc.world.setPixel(j, i, [255, 255, 255]);
-						if (!pix) continue;
-						d.data[4 * ((i - y) * w + (j - x))] = pix[0];
-						d.data[4 * ((i - y) * w + (j - x)) + 1] = pix[1];
-						d.data[4 * ((i - y) * w + (j - x)) + 2] = pix[2];
-						d.data[4 * ((i - y) * w + (j - x)) + 3] = 255;
 					}
 				}
 				_local_player.player.tool = "paste";
