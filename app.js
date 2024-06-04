@@ -2444,7 +2444,7 @@ var options = exports.options = (0, _misc.propertyDefaults)(userOptions, {
 	fool: shouldFool,
 	backgroundUrl: null,
 	/* Bug only affects Windows users with an old Intel graphics card driver */
-	chunkBugWorkaround: false, // navigator.userAgent.indexOf('Windows NT') !== -1
+	chunkBugWorkaround: true, // navigator.userAgent.indexOf('Windows NT') !== -1
 	hexCoords: false
 });
 
@@ -4404,7 +4404,7 @@ var OldProtocol = exports.OldProtocol = {
 		9: 'protect',
 		10: 'copy',
     11: 'ban',
-    12: 'text'
+    12: 'brush'
 	},
 	misc: {
 		worldVerification: 4321,
@@ -4482,7 +4482,7 @@ var OldProtocolImpl = function (_Protocol) {
 		};
 
 		var rankChanged = function rankChanged(rank) {
-			_this.placeBucket.infinite = rank === _conf.RANK.ADMIN;
+			_this.placeBucket.infinite = rank === _conf.RANK.OWNER;
 			_main.elements.chatInput.maxLength = OldProtocol.maxMessageLength[rank];
 		};
 		_this.leaveFunc = function () {
@@ -4527,7 +4527,7 @@ var OldProtocolImpl = function (_Protocol) {
 					_global.eventSys.emit(_conf.EVENTS.net.world.join, this.worldName);
 					_global.eventSys.emit(_conf.EVENTS.net.world.setId, _id);
 					_global.eventSys.emit(_conf.EVENTS.net.playerCount, this.playercount);
-					_global.eventSys.emit(_conf.EVENTS.net.chat, "[Server] Joined world: \"" + this.worldName + "\", your ID is: " + _id + "!");
+					_global.eventSys.emit(_conf.EVENTS.net.chat, "[Server] Joined world: \"" + this.worldName + "\", your ID is: " + _id + "!"); //when player comez
 					break;
 
 				case oc.worldUpdate:
@@ -4728,7 +4728,7 @@ var OldProtocolImpl = function (_Protocol) {
 			var distx = Math.trunc(x / OldProtocol.chunkSize) - Math.trunc(this.lastSentX / (OldProtocol.chunkSize * 16));distx *= distx;
 			var disty = Math.trunc(y / OldProtocol.chunkSize) - Math.trunc(this.lastSentY / (OldProtocol.chunkSize * 16));disty *= disty;
 			var dist = Math.sqrt(distx + disty);
-			if (this.isConnected() && (dist < 3 || _local_player.player.rank == _conf.RANK.ADMIN) && this.placeBucket.canSpend(1)) {
+			if (this.isConnected() && (dist < 3 || _local_player.player.rank >= _conf.RANK.ADMIN) && this.placeBucket.canSpend(1)) {
 				var array = new ArrayBuffer(11);
 				var dv = new DataView(array);
 				dv.setInt32(0, x, true);
@@ -6698,6 +6698,54 @@ _global.eventSys.once(_conf.EVENTS.misc.toolsRendered, function () {
 			}
 		});
 	}));
+  addTool(new Tool('Brush', _tool_renderer.cursors.brush, _Fx.PLAYERFX.RECT_SELECT_ALIGNED(3), _conf.RANK.ADMIN, function (tool) {
+		var lastX, lastY;
+		tool.setEvent('mousedown mousemove', function (mouse, event) {
+			var usedButtons = 3; /* Left and right mouse buttons are always used... */
+			/* White color if right clicking */
+			var color = mouse.buttons === 2 ? [255, 255, 255] : _local_player.player.selectedColor;
+			switch (mouse.buttons) {
+				case 1:
+				case 2:
+					if (!lastX || !lastY) {
+						lastX = mouse.tileX;
+						lastY = mouse.tileY;
+					}
+					(0, _misc.line)(lastX, lastY, mouse.tileX, mouse.tileY, 1, function (x, y) {
+						var pixel = _main.misc.world.getPixel(x, y);
+						if (pixel !== null && !(color[0] === pixel[0] && color[1] === pixel[1] && color[2] === pixel[2])) {
+							_main.misc.world.setPixel(x, y, color);
+              _main.misc.world.setPixel(x + 1, y, color);
+              _main.misc.world.setPixel(x, y + 1, color);
+              _main.misc.world.setPixel(x + 1, y + 1, color);
+              _main.misc.world.setPixel(x + 2, y, color);
+              _main.misc.world.setPixel(x, y + 2, color);
+              _main.misc.world.setPixel(x + 2, y + 2, color);
+              _main.misc.world.setPixel(x + 2, y + 1, color);
+              _main.misc.world.setPixel(x + 1, y + 2, color);
+						}
+					});
+					lastX = mouse.tileX;
+					lastY = mouse.tileY;
+					break;
+				case 4:
+					if (event.ctrlKey) {
+						usedButtons |= 4;
+						var color = _main.misc.world.getPixel(mouse.tileX, mouse.tileY);
+						if (color) {
+							_local_player.player.selectedColor = color;
+						}
+					}
+					break;
+			}
+			return usedButtons;
+		});
+		tool.setEvent('mouseup', function (mouse) {
+			lastX = null;
+			lastY = null;
+		});
+	}));
+
 
 	_global.eventSys.emit(_conf.EVENTS.misc.toolsInitialized);
 });
