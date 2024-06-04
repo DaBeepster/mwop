@@ -4403,7 +4403,8 @@ var OldProtocol = exports.OldProtocol = {
 		8: 'line',
 		9: 'protect',
 		10: 'copy',
-    11: 'ban'
+    11: 'ban',
+    12: 'brush'
 	},
 	misc: {
 		worldVerification: 4321,
@@ -6697,6 +6698,54 @@ _global.eventSys.once(_conf.EVENTS.misc.toolsRendered, function () {
 			}
 		});
 	}));
+  addTool(new Tool('Brush', _tool_renderer.cursors.brush, _Fx.PLAYERFX.RECT_SELECT_ALIGNED(3), _conf.RANK.ADMIN, function (tool) {
+		var lastX, lastY;
+		tool.setEvent('mousedown mousemove', function (mouse, event) {
+			var usedButtons = 3; /* Left and right mouse buttons are always used... */
+			/* White color if right clicking */
+			var color = mouse.buttons === 2 ? [255, 255, 255] : _local_player.player.selectedColor;
+			switch (mouse.buttons) {
+				case 1:
+				case 2:
+					if (!lastX || !lastY) {
+						lastX = mouse.tileX;
+						lastY = mouse.tileY;
+					}
+					(0, _misc.line)(lastX, lastY, mouse.tileX, mouse.tileY, 1, function (x, y) {
+						var pixel = _main.misc.world.getPixel(x, y);
+						if (pixel !== null && !(color[0] === pixel[0] && color[1] === pixel[1] && color[2] === pixel[2])) {
+							_main.misc.world.setPixel(x, y, color);
+              _main.misc.world.setPixel(x + 1, y, color);
+              _main.misc.world.setPixel(x, y + 1, color);
+              _main.misc.world.setPixel(x + 1, y + 1, color);
+              _main.misc.world.setPixel(x + 2, y, color);
+              _main.misc.world.setPixel(x, y + 2, color);
+              _main.misc.world.setPixel(x + 2, y + 2, color);
+              _main.misc.world.setPixel(x + 2, y + 1, color);
+              _main.misc.world.setPixel(x + 1, y + 2, color);
+						}
+					});
+					lastX = mouse.tileX;
+					lastY = mouse.tileY;
+					break;
+				case 4:
+					if (event.ctrlKey) {
+						usedButtons |= 4;
+						var color = _main.misc.world.getPixel(mouse.tileX, mouse.tileY);
+						if (color) {
+							_local_player.player.selectedColor = color;
+						}
+					}
+					break;
+			}
+			return usedButtons;
+		});
+		tool.setEvent('mouseup', function (mouse) {
+			lastX = null;
+			lastY = null;
+		});
+	}));
+
 
 	_global.eventSys.emit(_conf.EVENTS.misc.toolsInitialized);
 });
