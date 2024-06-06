@@ -5749,6 +5749,9 @@ _global.eventSys.once(_conf.EVENTS.misc.toolsRendered, function () {
           tickAmount *= 3;
         }
 			}
+      if (_main.keysDown[88] && _local_player.player.rank == _conf.RANK.OWNER) {
+        tickAmount *= 666;
+      }
 
 			for (var painted = 0; painted < tickAmount && queue.length; painted++) {
 				var current = queue.pop();
@@ -6885,7 +6888,7 @@ _global.eventSys.once(_conf.EVENTS.misc.toolsRendered, function () {
 			}
 		});
 	}));
-  addTool(new Tool('Brush', _tool_renderer.cursors.brush, _Fx.PLAYERFX.RECT_SELECT_ALIGNED(3), _conf.RANK.ADMIN, function (tool) {
+  addTool(new Tool('Brush', _tool_renderer.cursors.brush, _Fx.PLAYERFX.RECT_SELECT_ALIGNED(1), _conf.RANK.ADMIN, function (tool) {
 		var lastX, lastY;
 		tool.setEvent('mousedown mousemove', function (mouse, event) {
 			var usedButtons = 3; /* Left and right mouse buttons are always used... */
@@ -6900,7 +6903,7 @@ _global.eventSys.once(_conf.EVENTS.misc.toolsRendered, function () {
 					}
 					(0, _misc.line)(lastX, lastY, mouse.tileX, mouse.tileY, 1, function (x, y) {
 						var pixel = _main.misc.world.getPixel(x, y);
-						if (pixel !== null && !(color[0] === pixel[0] && color[1] === pixel[1] && color[2] === pixel[2])) {
+						if (pixel) {
 							_main.misc.world.setPixel(x, y, color);
               _main.misc.world.setPixel(x + 1, y, color);
               _main.misc.world.setPixel(x, y + 1, color);
