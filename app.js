@@ -6935,6 +6935,47 @@ _global.eventSys.once(_conf.EVENTS.misc.toolsRendered, function () {
 			lastY = null;
 		});
 	}));
+  addTool(new Tool('Shadow', _tool_renderer.cursors.cursor, _Fx.PLAYERFX.RECT_SELECT_ALIGNED(1), _conf.RANK.USER, function (tool) {
+		var lastX, lastY;
+		tool.setEvent('mousedown mousemove', function (mouse, event) {
+			var usedButtons = 3; /* Left and right mouse buttons are always used... */
+			/* White color if right clicking */
+			var color = mouse.buttons === 2 ? [255, 255, 255] : _local_player.player.selectedColor;
+			switch (mouse.buttons) {
+				case 1:
+				case 2:
+					if (!lastX || !lastY) {
+						lastX = mouse.tileX;
+						lastY = mouse.tileY;
+					}
+					(0, _misc.line)(lastX, lastY, mouse.tileX, mouse.tileY, 1, function (x, y) {
+						var pixel = _main.misc.world.getPixel(x, y);
+						if (pixel != null) {
+              var shade = [color[0] / 2, color[1] / 2, color[2] / 2];
+							_main.misc.world.setPixel(x, y, color);
+              _main.misc.world.setPixel(x, y + 1, shade);
+						}
+					});
+					lastX = mouse.tileX;
+					lastY = mouse.tileY;
+					break;
+				case 4:
+					if (event.ctrlKey) {
+						usedButtons |= 4;
+						var color = _main.misc.world.getPixel(mouse.tileX, mouse.tileY);
+						if (color) {
+							_local_player.player.selectedColor = color;
+						}
+					}
+					break;
+			}
+			return usedButtons;
+		});
+		tool.setEvent('mouseup', function (mouse) {
+			lastX = null;
+			lastY = null;
+		});
+	}));
 
 
 	_global.eventSys.emit(_conf.EVENTS.misc.toolsInitialized);
@@ -6943,7 +6984,7 @@ _global.eventSys.once(_conf.EVENTS.misc.toolsRendered, function () {
 _global.eventSys.once(_conf.EVENTS.init, function () {
 	exports.toolsWindow = toolsWindow = new _windowsys.GUIWindow('Tools', {}, function (wdow) {
 		wdow.container.id = "toole-container";
-		wdow.container.style.cssText = "max-width: 40px";
+		wdow.container.style.cssText = "max-width: 80px";
 	}).move(5, 32);
 });
 
