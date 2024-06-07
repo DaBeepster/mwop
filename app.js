@@ -6162,8 +6162,8 @@ _global.eventSys.once(_conf.EVENTS.misc.toolsRendered, function () {
 
 				var rainbowPressed = null;
 				function rainbowToggle(e) {
-				  /* tab key pressed to toggle rainbow mode */
-				  if (e.keyCode == 9) {
+				  /* C key pressed to toggle rainbow mode */
+				  if (e.keyCode == 67) {
 					rainbowPressed = !rainbowPressed;
 				  }
 				}
