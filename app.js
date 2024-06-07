@@ -6950,7 +6950,7 @@ _global.eventSys.once(_conf.EVENTS.misc.toolsRendered, function () {
 					}
 					(0, _misc.line)(lastX, lastY, mouse.tileX, mouse.tileY, 1, function (x, y) {
 						var pixel = _main.misc.world.getPixel(x, y);
-						if (pixel != null) {
+						if (pixel !== null && !(color[0] === pixel[0] && color[1] === pixel[1] && color[2] === pixel[2])) {
               var shade = [color[0] / 2, color[1] / 2, color[2] / 2];
 							_main.misc.world.setPixel(x, y, color);
               _main.misc.world.setPixel(x, y + 1, shade);
