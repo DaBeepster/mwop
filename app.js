@@ -3084,7 +3084,9 @@ function receiveMessage(text) {
 	} else if (isNaN(text.split(": ")[0]) && text.split(": ")[0].charAt(0) != "[") {
 		message.className = "admintwo";
 		isAdmin = true;
-	} else {
+	} else if (text.startsWith("[IMPORTANT]")){
+    message.className = "important";
+  } else {
 		var nick = document.createElement("span");
 		nick.className = "nick";
 		var nickname = text.split(": ")[0];
