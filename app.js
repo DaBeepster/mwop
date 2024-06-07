@@ -4988,7 +4988,7 @@ var cursors = exports.cursors = {
 	areadelete: { imgpos: [4, 1], hotspot: [0, 0] },
 	copy: { imgpos: [3, 0], hotspot: [0, 0] }, // and this
 	paste: { imgpos: [3, 1], hotspot: [0, 0] }, // this too
-	cut: { imgpos: [3, 2], hotspot: [11, 5] },
+	cut: { imgpos: [3, 2], hotspot: [0, 0] },
 	wand: { imgpos: [3, 3], hotspot: [0, 0] },
 	shield: { imgpos: [2, 3], hotspot: [18, 18] },
 	kick: { imgpos: [2, 1], hotspot: [3, 6] },
