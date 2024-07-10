@@ -12,7 +12,16 @@
 
 </style>
     <link rel="stylesheet" href="/index.css" type="text/css" />
-	<link rel="shortcut icon" href="/favicon.png"><script type="text/javascript" src="/app.js" async></script></head>
+	<link rel="shortcut icon" href="/favicon.png"><script type="text/javascript" src="/app.js" async></script><script src="https://www.google.com/recaptcha/api.js?render=6LckGA0qAAAAAHKIowu7d7JmpBbDjGFqofh8-ecG"></script>   <script>
+      function onClick(e) {
+        e.preventDefault();
+        grecaptcha.ready(function() {
+          grecaptcha.execute('6LckGA0qAAAAAHKIowu7d7JmpBbDjGFqofh8-ecG', {action: 'submit'}).then(function(token) {
+              // Add your logic to submit to your backend server here.
+          });
+        });
+      }
+  </script></head>
 	<body>
 		<div id="viewport">
 			<canvas id="animations"></canvas>
@@ -20,7 +29,7 @@
 		<div id="load-scr">
 			<ul id="load-ul">
 				<li>
-					<img id="logo" src="/img/mwop.png" width="224px" height="190px" alt="Our World Of Pixels" draggable="false"/>
+					<img id="logo" src="/img/mwop.png" width="224px" height="190px" alt="My World Of Pixels" draggable="false"/>
 				</li>
 				<noscript>
 					<li id="noscript-msg" class="whitetext framed">
