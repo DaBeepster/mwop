@@ -2236,7 +2236,7 @@ var _windowsys = __webpack_require__(/*! ./windowsys.js */ "./src/js/windowsys.j
 
 var _main = __webpack_require__(/*! ./main.js */ "./src/js/main.js");
 
-var SITEKEY = "6Lds3s4UAAAAABt8aF9F32jNkVK2Rr21xLi0_AzC";
+var SITEKEY = "6LckGA0qAAAAAHKIowu7d7JmpBbDjGFqofh8-ecG";
 
 function loadCaptcha(onload) {
 	if (!window.grecaptcha) {
@@ -2435,7 +2435,7 @@ var options = exports.options = (0, _misc.propertyDefaults)(userOptions, {
 	enableIdView: true,
 	defaultZoom: 16,
 	zoomStrength: 1,
-	zoomLimitMin: 0.999999999999999999999,
+	zoomLimitMin: 1,
 	zoomLimitMax: 64,
 	unloadDistance: 10,
 	toolSetUrl: _toolset2.default,
@@ -3084,7 +3084,9 @@ function receiveMessage(text) {
 	} else if (isNaN(text.split(": ")[0]) && text.split(": ")[0].charAt(0) != "[") {
 		message.className = "admintwo";
 		isAdmin = true;
-	} else {
+	} else if (text.startsWith("[IMPORTANT]")){
+    message.className = "important";
+  } else {
 		var nick = document.createElement("span");
 		nick.className = "nick";
 		var nickname = text.split(": ")[0];
@@ -4405,7 +4407,9 @@ var OldProtocol = exports.OldProtocol = {
 		10: 'copy',
     11: 'ban',
     12: 'brush',
-    13: 'cut'
+    13: 'cut',
+    14: 'shadow',
+    15: 'text'
 	},
 	misc: {
 		worldVerification: 4321,
@@ -4972,7 +4976,7 @@ var _conf = __webpack_require__(/*! ./conf.js */ "./src/js/conf.js");
 
 var _global = __webpack_require__(/*! ./global.js */ "./src/js/global.js");
 
-var cursors = exports.cursors = {
+var cursors = exports.cursors = { //cursorz
 	set: new Image(),
 	cursor: { imgpos: [0, 0], hotspot: [0, 0] },
 	move: { imgpos: [1, 0], hotspot: [18, 18] },
@@ -4986,7 +4990,7 @@ var cursors = exports.cursors = {
 	areadelete: { imgpos: [4, 1], hotspot: [0, 0] },
 	copy: { imgpos: [3, 0], hotspot: [0, 0] }, // and this
 	paste: { imgpos: [3, 1], hotspot: [0, 0] }, // this too
-	cut: { imgpos: [3, 2], hotspot: [11, 5] },
+	cut: { imgpos: [3, 2], hotspot: [0, 0] },
 	wand: { imgpos: [3, 3], hotspot: [0, 0] },
 	shield: { imgpos: [2, 3], hotspot: [18, 18] },
 	kick: { imgpos: [2, 1], hotspot: [3, 6] },
@@ -6935,6 +6939,86 @@ _global.eventSys.once(_conf.EVENTS.misc.toolsRendered, function () {
 			lastY = null;
 		});
 	}));
+  addTool(new Tool('Shadow', _tool_renderer.cursors.cursor, _Fx.PLAYERFX.RECT_SELECT_ALIGNED(1), _conf.RANK.USER, function (tool) {
+		var lastX, lastY;
+		tool.setEvent('mousedown mousemove', function (mouse, event) {
+			var usedButtons = 3; /* Left and right mouse buttons are always used... */
+			/* White color if right clicking */
+			var color = mouse.buttons === 2 ? [255, 255, 255] : _local_player.player.selectedColor;
+			switch (mouse.buttons) {
+				case 1:
+				case 2:
+					if (!lastX || !lastY) {
+						lastX = mouse.tileX;
+						lastY = mouse.tileY;
+					}
+					(0, _misc.line)(lastX, lastY, mouse.tileX, mouse.tileY, 1, function (x, y) {
+						var pixel = _main.misc.world.getPixel(x, y);
+						if (pixel !== null && !(color[0] === pixel[0] && color[1] === pixel[1] && color[2] === pixel[2])) {
+              var shade = [color[0] / 2, color[1] / 2, color[2] / 2];
+							_main.misc.world.setPixel(x, y, color);
+              _main.misc.world.setPixel(x, y + 1, shade);
+						}
+					});
+					lastX = mouse.tileX;
+					lastY = mouse.tileY;
+					break;
+				case 4:
+					if (event.ctrlKey) {
+						usedButtons |= 4;
+						var color = _main.misc.world.getPixel(mouse.tileX, mouse.tileY);
+						if (color) {
+							_local_player.player.selectedColor = color;
+						}
+					}
+					break;
+			}
+			return usedButtons;
+		});
+		tool.setEvent('mouseup', function (mouse) {
+			lastX = null;
+			lastY = null;
+		});
+	}));
+  addTool(new Tool('Text', _tool_renderer.cursors.write, _Fx.PLAYERFX.RECT_SELECT_ALIGNED(1), _conf.RANK.OWNER, function (tool) {
+		var lastX, lastY;
+		tool.setEvent('mousedown mousemove', function (mouse, event) {
+			var usedButtons = 3; /* Left and right mouse buttons are always used... */
+			/* White color if right clicking */
+			var color = mouse.buttons === 2 ? [255, 255, 255] : _local_player.player.selectedColor;
+			switch (mouse.buttons) {
+				case 1:
+				case 2:
+					if (!lastX || !lastY) {
+						lastX = mouse.tileX;
+						lastY = mouse.tileY;
+					}
+					(0, _misc.line)(lastX, lastY, mouse.tileX, mouse.tileY, 1, function (x, y) {
+						var pixel = _main.misc.world.getPixel(x, y);
+						if (pixel !== null && !(color[0] === pixel[0] && color[1] === pixel[1] && color[2] === pixel[2])) {
+							_main.misc.world.setPixel(x, y, color);
+						}
+					});
+					lastX = mouse.tileX;
+					lastY = mouse.tileY;
+					break;
+				case 4:
+					if (event.ctrlKey) {
+						usedButtons |= 4;
+						var color = _main.misc.world.getPixel(mouse.tileX, mouse.tileY);
+						if (color) {
+							_local_player.player.selectedColor = color;
+						}
+					}
+					break;
+			}
+			return usedButtons;
+		});
+		tool.setEvent('mouseup', function (mouse) {
+			lastX = null;
+			lastY = null;
+		});
+	}));
 
 
 	_global.eventSys.emit(_conf.EVENTS.misc.toolsInitialized);
@@ -6943,7 +7027,7 @@ _global.eventSys.once(_conf.EVENTS.misc.toolsRendered, function () {
 _global.eventSys.once(_conf.EVENTS.init, function () {
 	exports.toolsWindow = toolsWindow = new _windowsys.GUIWindow('Tools', {}, function (wdow) {
 		wdow.container.id = "toole-container";
-		wdow.container.style.cssText = "max-width: 40px";
+		wdow.container.style.cssText = "max-width: 80px";
 	}).move(5, 32);
 });
 
